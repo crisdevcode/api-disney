@@ -1,3 +1,5 @@
+import Character from '../Models/CharacterModel.js';
+
 // GET
 const getAllCharacters = (req, res) => {
   res.status(200).json({
@@ -15,11 +17,28 @@ const getCharacter = (req, res) => {
 };
 
 // POST
-const createCharacter = (req, res) => {
-  res.status(201).json({
-    status: 'success',
-    message: 'This route is not yet defined!',
-  });
+const createCharacter = async (req, res) => {
+  const { image, name, age, weight, story } = req.body;
+  try {
+    const newCharacter = await Character.create({
+      image,
+      name,
+      age,
+      weight,
+      story,
+    });
+    res.status(201).json({
+      status: 'success',
+      data: {
+        character: newCharacter,
+      },
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: 'fail',
+      message: 'Invalid data sent',
+    });
+  }
 };
 
 // UPDATE
