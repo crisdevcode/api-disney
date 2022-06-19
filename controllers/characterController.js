@@ -1,11 +1,21 @@
 import Character from '../Models/CharacterModel.js';
 
 // GET
-const getAllCharacters = (req, res) => {
-  res.status(200).json({
-    status: 'success',
-    message: 'This route is not yet defined!',
-  });
+const getAllCharacters = async (req, res) => {
+  try {
+    const characters = await Character.findAll();
+    res.status(200).json({
+      status: 'success',
+      data: {
+        characters,
+      },
+    });
+  } catch (err) {
+    res.status(404).json({
+      status: 'fail',
+      message: err,
+    });
+  }
 };
 
 // GET
