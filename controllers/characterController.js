@@ -98,12 +98,24 @@ const updateCharacter = async (req, res) => {
 };
 
 // DELETE
-const deleteCharacter = (req, res) => {
-  res.status(204).json({
-    status: 'success',
-    message: 'This route is not yet defined!',
-    data: null,
-  });
+const deleteCharacter = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await Character.destroy({
+      where: {
+        id,
+      },
+    });
+    res.status(204).json({
+      status: 'success',
+      data: null,
+    });
+  } catch (err) {
+    res.status(404).json({
+      status: 'success',
+      message: err,
+    });
+  }
 };
 
 // eslint-disable-next-line import/prefer-default-export
