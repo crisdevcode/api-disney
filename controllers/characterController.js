@@ -6,6 +6,7 @@ const getAllCharacters = async (req, res) => {
     const characters = await Character.findAll();
     res.status(200).json({
       status: 'success',
+      results: characters.length,
       data: {
         characters,
       },
