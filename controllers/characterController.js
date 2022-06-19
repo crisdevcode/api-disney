@@ -19,11 +19,26 @@ const getAllCharacters = async (req, res) => {
 };
 
 // GET
-const getCharacter = (req, res) => {
-  res.status(200).json({
-    status: 'success',
-    message: 'This route is not yet defined!',
-  });
+const getCharacter = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const character = await Character.findOne({
+      where: {
+        id,
+      },
+    });
+    res.status(200).json({
+      data: {
+        character,
+      },
+    });
+  } catch (err) {
+    res.status(404).json({
+      status: 'fail',
+      message: err,
+    });
+  }
 };
 
 // POST
