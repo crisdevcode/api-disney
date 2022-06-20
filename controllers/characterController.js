@@ -1,20 +1,14 @@
 import Character from '../Models/CharacterModel.js';
+import APIFeatures from '../utils/apiFeatures.js';
 
 // GET
 const getAllCharacters = async (req, res) => {
   try {
-    // 1) Build query
-    const queryObj = { ...req.query };
-    const excludeFields = ['page', 'sort', 'limit', 'fields'];
-    excludeFields.forEach((el) => delete queryObj[el]);
+    // EXECUTE QUERY: Filter
+    const features = new APIFeatures(Character, req.query, ['image', 'name']);
+    const characters = await features.filter();
 
-    // 2) Filtering data
-    const characters = await Character.findAll({
-      where: queryObj,
-      attributes: ['image', 'name'],
-    });
-
-    // 3) Send response
+    // SEND RESPONSE
     res.status(200).json({
       status: 'success',
       results: characters.length,
