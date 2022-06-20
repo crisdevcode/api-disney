@@ -3,7 +3,18 @@ import Character from '../Models/CharacterModel.js';
 // GET
 const getAllCharacters = async (req, res) => {
   try {
-    const characters = await Character.findAll();
+    // 1) Build query
+    const queryObj = { ...req.query };
+    const excludeFields = ['page', 'sort', 'limit', 'fields'];
+    excludeFields.forEach((el) => delete queryObj[el]);
+
+    // 2) Filtering data
+    const characters = await Character.findAll({
+      where: queryObj,
+      attributes: ['image', 'name'],
+    });
+
+    // 3) Send response
     res.status(200).json({
       status: 'success',
       results: characters.length,
