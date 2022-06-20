@@ -1,4 +1,5 @@
 import { DataTypes } from 'sequelize';
+import slugify from 'slugify';
 import sequelize from '../database/database.js';
 
 const Character = sequelize.define('Character', {
@@ -12,6 +13,7 @@ const Character = sequelize.define('Character', {
       },
     },
   },
+  slug: DataTypes.STRING,
   name: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -53,6 +55,12 @@ const Character = sequelize.define('Character', {
       },
     },
   },
+});
+
+// Hooks
+Character.addHook('beforeSave', (currentDoc) => {
+  const { dataValues: character } = currentDoc;
+  character.slug = slugify(character.name, { lower: true });
 });
 
 export default Character;
