@@ -22,6 +22,10 @@ const Character = sequelize.define('Character', {
         ags: true,
         msg: 'A character must have a name',
       },
+      len: {
+        args: [3, 30],
+        msg: 'A character name must have between 3 and 30 characters',
+      },
     },
     unique: true,
   },
@@ -33,15 +37,27 @@ const Character = sequelize.define('Character', {
         ags: true,
         msg: 'A character must have a age',
       },
+      min: {
+        args: 1,
+        msg: 'Age must be above 1',
+      },
+      max: {
+        args: 100,
+        msg: 'Age must be below 100',
+      },
     },
   },
   weight: {
-    type: DataTypes.DECIMAL(10, 2),
+    type: DataTypes.DOUBLE,
     allowNull: false,
     validate: {
       notNull: {
         ags: true,
         msg: 'A character must have a weight',
+      },
+      min: {
+        args: 1,
+        msg: 'Weight must be above 1',
       },
     },
   },
