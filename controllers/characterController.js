@@ -1,128 +1,108 @@
 import Character from '../Models/CharacterModel.js';
 import APIFeatures from '../utils/apiFeatures.js';
+import catchAsync from '../utils/catchAsync.js';
+import AppError from '../utils/appError.js';
 
 // GET
-const getAllCharacters = async (req, res) => {
-  try {
-    // EXECUTE QUERY: Filter
-    const features = new APIFeatures(Character, req.query, ['image', 'name']);
-    const characters = await features.filter();
+const getAllCharacters = catchAsync(async (req, res, next) => {
+  // EXECUTE QUERY: Filter
+  const features = new APIFeatures(Character, req.query, ['image', 'name']);
+  const characters = await features.filter();
 
-    // SEND RESPONSE
-    res.status(200).json({
-      status: 'success',
-      results: characters.length,
-      data: {
-        characters,
-      },
-    });
-  } catch (err) {
-    res.status(404).json({
-      status: 'fail',
-      message: err,
-    });
-  }
-};
+  // SEND RESPONSE
+  res.status(200).json({
+    status: 'success',
+    results: characters.length,
+    data: {
+      characters,
+    },
+  });
+});
 
 // GET
-const getCharacter = async (req, res) => {
-  try {
-    const { id } = req.params;
+const getCharacter = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+  const character = await Character.findOne({
+    where: {
+      id,
+    },
+  });
 
-    const character = await Character.findOne({
-      where: {
-        id,
-      },
-    });
-    res.status(200).json({
-      data: {
-        character,
-      },
-    });
-  } catch (err) {
-    res.status(404).json({
-      status: 'fail',
-      message: err,
-    });
+  if (!character) {
+    return next(new AppError('No character found with that ID', 404));
   }
-};
+
+  res.status(200).json({
+    data: {
+      character,
+    },
+  });
+});
 
 // POST
-const createCharacter = async (req, res) => {
+const createCharacter = catchAsync(async (req, res, next) => {
   const { image, name, age, weight, story } = req.body;
-  try {
-    const newCharacter = await Character.create({
-      image,
-      name,
-      age,
-      weight,
-      story,
-    });
-    res.status(201).json({
-      status: 'success',
-      data: {
-        character: newCharacter,
-      },
-    });
-  } catch (err) {
-    res.status(400).json({
-      status: 'fail',
-      message: 'Invalid data sent',
-    });
-  }
-};
+  const newCharacter = await Character.create({
+    image,
+    name,
+    age,
+    weight,
+    story,
+  });
+  res.status(201).json({
+    status: 'success',
+    data: {
+      character: newCharacter,
+    },
+  });
+});
 
 // UPDATE
-const updateCharacter = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { image, name, age, weight, story } = req.body;
+const updateCharacter = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+  const { image, name, age, weight, story } = req.body;
 
-    const character = await Character.findByPk(id);
-    character.set({
-      image,
-      name,
-      age,
-      weight,
-      story,
-    });
+  const character = await Character.findByPk(id);
 
-    await character.save();
-
-    res.status(201).json({
-      status: 'success',
-      data: {
-        character,
-      },
-    });
-  } catch (err) {
-    res.status(404).json({
-      status: 'fail',
-      message: err,
-    });
+  if (!character) {
+    return next(new AppError('No character found with that ID', 404));
   }
-};
 
+  character.set({
+    image,
+    name,
+    age,
+    weight,
+    story,
+  });
+
+  await character.save();
+
+  res.status(201).json({
+    status: 'success',
+    data: {
+      character,
+    },
+  });
+});
 // DELETE
-const deleteCharacter = async (req, res) => {
-  try {
-    const { id } = req.params;
-    await Character.destroy({
-      where: {
-        id,
-      },
-    });
-    res.status(204).json({
-      status: 'success',
-      data: null,
-    });
-  } catch (err) {
-    res.status(404).json({
-      status: 'success',
-      message: err,
-    });
+const deleteCharacter = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+  const character = await Character.destroy({
+    where: {
+      id,
+    },
+  });
+
+  if (!character) {
+    return next(new AppError('No character found with that ID', 404));
   }
-};
+
+  res.status(204).json({
+    status: 'success',
+    data: null,
+  });
+});
 
 // eslint-disable-next-line import/prefer-default-export
 export const methods = {
