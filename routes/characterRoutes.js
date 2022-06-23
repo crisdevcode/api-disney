@@ -1,11 +1,12 @@
 import express from 'express';
 import { methods as characterController } from '../controllers/characterController.js';
+import { methods as authController } from '../controllers/authController.js';
 
 const router = express.Router();
 
 router
   .route('/')
-  .get(characterController.getAllCharacters)
+  .get(authController.protect, characterController.getAllCharacters)
   .post(characterController.createCharacter);
 router
   .route('/:id')
