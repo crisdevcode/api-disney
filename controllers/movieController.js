@@ -5,14 +5,16 @@ import catchAsync from '../utils/catchAsync.js';
 
 // GET
 const getAllMovies = catchAsync(async (req, res, next) => {
-  // EXECUTE QUERY: Filter
+  // 1) Filtering
   const features = new APIFeatures(Movie, req.query, [
     'image',
     'title',
     'createdAt',
-  ]);
+  ])
+    .filter()
+    .sort();
 
-  const movies = await features.filter();
+  const movies = await features.data;
 
   // SEND RESPONSE
   res.status(200).json({
