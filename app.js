@@ -8,6 +8,7 @@ import hpp from 'hpp';
 import globalErrorHandler from './controllers/errorController.js';
 import AppError from './utils/appError.js';
 import characterRouter from './routes/characterRoutes.js';
+import movieRouter from './routes/movieRoutes.js';
 import userRouter from './routes/userRoutes.js';
 
 const app = express();
@@ -47,6 +48,7 @@ app.use((req, res, next) => {
 // 2) ROUTES
 app.use('/api/v1/characters', characterRouter);
 app.use('/api/v1/users', userRouter);
+app.use('/api/v1/movies', movieRouter);
 
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server`, 404));
