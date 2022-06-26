@@ -1,4 +1,5 @@
 import Movie from '../Models/MovieModel.js';
+import Character from '../Models/CharacterModel.js';
 import APIFeatures from '../utils/apiFeatures.js';
 import AppError from '../utils/appError.js';
 import catchAsync from '../utils/catchAsync.js';
@@ -6,13 +7,7 @@ import catchAsync from '../utils/catchAsync.js';
 // GET
 const getAllMovies = catchAsync(async (req, res, next) => {
   // 1) Filtering
-  const features = new APIFeatures(Movie, req.query, [
-    'image',
-    'title',
-    'createdAt',
-  ])
-    .filter()
-    .sort();
+  const features = new APIFeatures(Movie, req.query).filter().sort();
 
   const movies = await features.data;
 
@@ -33,6 +28,12 @@ const getMovie = catchAsync(async (req, res, next) => {
     where: {
       id,
     },
+    include: [
+      {
+        model: Character,
+        as: 'characters',
+      },
+    ],
   });
 
   if (!movie) {
@@ -48,11 +49,14 @@ const getMovie = catchAsync(async (req, res, next) => {
 
 // POST
 const createMovie = catchAsync(async (req, res, next) => {
-  const { image, title } = req.body;
+  const { image, title, genreId, characterId } = req.body;
   const newMovie = await Movie.create({
     image,
     title,
+    genreId,
+    characterId,
   });
+
   res.status(201).json({
     status: 'success',
     data: {

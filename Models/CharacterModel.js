@@ -1,8 +1,14 @@
 import { DataTypes } from 'sequelize';
 import slugify from 'slugify';
 import sequelize from '../database/database.js';
+import Movie from './MovieModel.js';
 
 const Character = sequelize.define('Character', {
+  id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+  },
   image: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -77,6 +83,19 @@ const Character = sequelize.define('Character', {
 Character.addHook('beforeSave', (currentDoc) => {
   const { dataValues: character } = currentDoc;
   character.slug = slugify(character.name, { lower: true });
+});
+
+// Relations
+Character.belongsToMany(Movie, {
+  through: 'CharacterMovies',
+  as: 'movies',
+  foreignKey: 'characterId',
+});
+
+Movie.belongsToMany(Character, {
+  through: 'CharacterMovies',
+  as: 'characters',
+  foreignKey: 'movieId',
 });
 
 export default Character;

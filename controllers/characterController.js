@@ -1,13 +1,15 @@
 import Character from '../Models/CharacterModel.js';
+import Movie from '../Models/MovieModel.js';
 import APIFeatures from '../utils/apiFeatures.js';
 import catchAsync from '../utils/catchAsync.js';
 import AppError from '../utils/appError.js';
 
 // GET
 const getAllCharacters = catchAsync(async (req, res, next) => {
-  // EXECUTE QUERY: Filter
-  const features = new APIFeatures(Character, req.query, ['image', 'name']);
-  const characters = await features.filter();
+  // 1) Filtering
+  const features = new APIFeatures(Character, req.query).filter();
+
+  const characters = await features.data;
 
   // SEND RESPONSE
   res.status(200).json({
@@ -26,6 +28,12 @@ const getCharacter = catchAsync(async (req, res, next) => {
     where: {
       id,
     },
+    include: [
+      {
+        model: Movie,
+        as: 'movies',
+      },
+    ],
   });
 
   if (!character) {
@@ -104,10 +112,29 @@ const deleteCharacter = catchAsync(async (req, res, next) => {
   });
 });
 
+// ADD Character
+const getCharacterMovies = catchAsync(async (req, res, next) => {
+  // Search Character
+  const { id } = req.params;
+  const character = await Character.findByPk(id);
+
+  // Seach Movie
+  const movie = await Movie.findAll({
+    where: {
+      characterId: id,
+    },
+  });
+
+  // Add movies to character
+  await character.addMovie(movie);
+  next();
+});
+
 // eslint-disable-next-line import/prefer-default-export
 export const methods = {
   getAllCharacters,
   getCharacter,
+  getCharacterMovies,
   createCharacter,
   updateCharacter,
   deleteCharacter,

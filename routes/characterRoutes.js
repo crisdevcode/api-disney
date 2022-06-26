@@ -10,7 +10,7 @@ router
   .post(characterController.createCharacter);
 router
   .route('/:id')
-  .get(characterController.getCharacter)
+  .get(characterController.getCharacterMovies, characterController.getCharacter)
   .patch(characterController.updateCharacter)
   .delete(characterController.deleteCharacter);
 

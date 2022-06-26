@@ -10,6 +10,7 @@ import AppError from './utils/appError.js';
 import characterRouter from './routes/characterRoutes.js';
 import movieRouter from './routes/movieRoutes.js';
 import userRouter from './routes/userRoutes.js';
+import genreRouter from './routes/genreRoutes.js';
 
 const app = express();
 
@@ -49,6 +50,7 @@ app.use((req, res, next) => {
 app.use('/api/v1/characters', characterRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/movies', movieRouter);
+app.use('/api/v1/genres', genreRouter);
 
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server`, 404));
