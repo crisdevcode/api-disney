@@ -14,6 +14,11 @@ import genreRouter from './routes/genreRoutes.js';
 
 const app = express();
 
+app.set('view engine', 'pug');
+
+// app.set('views', path.join(__dirname, 'views'));
+app.set('views', './views');
+
 // 1) GLOBAL MIDDLEWARES
 // Set security HTTP headers
 app.use(helmet());

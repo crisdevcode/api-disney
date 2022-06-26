@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import User from '../Models/userModel.js';
 import AppError from '../utils/appError.js';
 import catchAsync from '../utils/catchAsync.js';
+import Email from '../utils/email.js';
 
 const signToken = (id) =>
   jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -43,6 +44,12 @@ const register = catchAsync(async (req, res, next) => {
     password,
     passwordConfirm,
   });
+
+  // const url = `${req.protocol}://${req.get('host')}/me`;
+  const url = '';
+
+  await new Email(newUser, url).sendWelcome();
+
   createSendToken(newUser, 201, res);
 });
 
