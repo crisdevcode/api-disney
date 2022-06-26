@@ -7,14 +7,14 @@ const getAllGenres = catchAsync(async (req, res, next) => {
   // 1) Filtering
   const features = new APIFeatures(Genre, req.query).filter();
 
-  const characters = await features.data;
+  const genres = await features.data;
 
   // SEND RESPONSE
   res.status(200).json({
     status: 'success',
-    results: characters.length,
+    results: genres.length,
     data: {
-      characters,
+      genres,
     },
   });
 });

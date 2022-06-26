@@ -3,6 +3,9 @@ import { methods as genreController } from '../controllers/genreController.js';
 
 const router = express.Router();
 
-router.route('/').post(genreController.createGenre);
+router
+  .route('/')
+  .get(genreController.getAllGenres)
+  .post(genreController.createGenre);
 
 export default router;
